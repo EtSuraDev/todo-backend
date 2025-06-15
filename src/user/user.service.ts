@@ -17,7 +17,7 @@ export class UserService {
 
     
 
-    async create(user: CreateUserDto) {
+    async create(user: CreateUserDto): Promise<Omit<User, "password"> & { id: string }> {
        try {
             let findUser = await this.usersRepository.findOneBy({email: user.email})
             if(findUser) {
@@ -28,13 +28,10 @@ export class UserService {
             user.password = hashedPassword
             let newUser = this.usersRepository.create(user)
             let { password, ...safeUser} = await this.usersRepository.save(newUser)
-            safeUser["success"] = true
             return safeUser
        } catch (error) {
         console.log(error)
          if (error instanceof ConflictException) throw error;
-
-        // Otherwise throw generic internal server error
         throw new InternalServerErrorException('Server failed');
        }
     }
@@ -61,4 +58,22 @@ export class UserService {
             console.log(error)
         }
     }
+
+
+    async findUserById(id:string): Promise<CreateUserDto &{id:string}> {
+        let findUser = await this.usersRepository.findOneBy({id})
+        if (!findUser) {
+            throw new NotFoundException(`user id ${id} not found`)
+        }
+        return findUser
+    }
+    async findUserByEmail(email:string):Promise<CreateUserDto&{id:string}>{
+        let findUser = await this.usersRepository.findOneBy({email})
+        if (!findUser) {
+            throw new NotFoundException(`user email ${email} not found`)
+        }
+        return findUser
+    }
+
+
 }
