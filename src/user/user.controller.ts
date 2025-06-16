@@ -7,14 +7,14 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
 
-  // @Post()
-  // create(@Body(
-  //   new ValidationPipe()
-  // ) createUserDto:CreateUserDto
-  // ) {
-  //   console.log(createUserDto)
-  //   return this.userService.create(createUserDto)
-  // }
+  @Post()
+  create(@Body(
+    new ValidationPipe()
+  ) createUserDto:CreateUserDto
+  ) {
+    console.log(createUserDto)
+    return this.userService.create(createUserDto)
+  }
   
   @Get()
   find(@Query() id) {

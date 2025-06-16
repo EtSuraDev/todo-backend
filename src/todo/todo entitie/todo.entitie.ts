@@ -15,7 +15,7 @@ export class Todo {
     @Column()
     todo: string
 
-    @Column({ type: "enum", enum: Status, default: Status.active  })
+    @Column({ type: "enum", enum: Status})
     status: Status
 
     @Column()
