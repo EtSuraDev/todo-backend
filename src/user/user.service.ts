@@ -36,26 +36,25 @@ export class UserService {
        }
     }
 
-    async getUserData(id) {
-        let findUser
-        try {
-            findUser = await this.usersRepository.findOneBy({id: id.id})
-            if(!findUser){
-                console.log(id.id)
-                return new NotFoundException(`user id ${id.id} not found`)
-            }
-            return findUser
-        } catch (error) {
-            console.log(findUser)
-            console.log(error)
-        }
-    }
 
-    async update(name) {
+    async update(id: string, user: Omit<CreateUserDto, "password">) {
         try {
-            // let updatedUser = this.usersRepository.update()
+            let updateUser = await this.usersRepository.update(id, {
+                name: user.name,
+                email: user.email,
+            })
+
+            if ( updateUser.affected && updateUser.affected > 0) {
+                console.log('✅ Update successful');
+                return { success: true, message: 'user updated successfully' };
+            } else {
+                console.log('❌ Update failed or todo not found');
+                throw new NotFoundException('user not found or not updated');
+            }
         } catch (error) {
             console.log(error)
+            if (error instanceof  NotFoundException) throw error
+            throw new InternalServerErrorException("server error")
         }
     }
 
